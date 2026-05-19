@@ -128,6 +128,8 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
   .opt{font-size:0.92rem;}
 }
 </style>
+<script src="code-engine.js"></script>
+<script src="code-ui.js"></script>
 </head>
 <body>
 
@@ -848,6 +850,17 @@ function endGame(){
     else if(pct>=50)                stars=1;
     else                            stars=0;
     setBest(tp.id, curLevel, stars);
+    {
+      // Arcade code — only on improvement
+      const _tot = TOPICS.reduce((t,tp)=>t+tp.levels.reduce((s,_,i)=>s+getBest(tp.id,i),0),0);
+      const _max = TOPICS.reduce((t,tp)=>t+(tp.levels.length*3),0);
+      const _pct = Math.round((_tot/_max)*100);
+      const _prevPct = parseInt(localStorage.getItem('esp3_completion_pct')||'0');
+      if(_pct > _prevPct) {
+        localStorage.setItem('esp3_completion_pct', _pct);
+        if(typeof showArcadeCode==='function') showArcadeCode('review3', _pct);
+      }
+    }
     const xp = correct*10 + (stars===3?50:stars===2?25:stars===1?10:0);
     let emoji,title;
     if(pct===100){emoji='🏆';title='¡Perfecto!';}
